@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -214,6 +216,83 @@ public class Main {
 		gBC.gridx = 1;
 		gBC.gridy = 0;
 		gBC.ipady = 40;
+		LeserIDSuche.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final JFrame LeserIDSucheFrame = new JFrame("LeserNr Suche");
+				LeserIDSucheFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				LeserIDSucheFrame.setLocation(MainFrame.getLocation());
+				LeserIDSucheFrame.setIconImage(MainIcon);
+				LeserIDSucheFrame.setResizable(resizeable);
+				JScrollPane JPSearch = new JScrollPane(LeserIDSucheFrame);
+				JPSearch.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				JPSearch.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				JPSearch.setLayout(new BoxLayout(JPSearch, BoxLayout.Y_AXIS));
+				ArrayList<Leser> Leserarray = mysql.getAllLeser();
+				ArrayList<JLabel> Labelarray = new ArrayList<>();
+				JTextField Suche = new JTextField();
+				new TextPrompt("Suche", Suche);
+				Suche.getDocument().addDocumentListener(new DocumentListener() {
+					
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						suche();
+					}
+
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						suche();
+					}
+					
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						suche();
+					}
+					
+					private void suche() {
+						
+					}
+				});
+				JPSearch.add(Suche);
+				
+				for(int i = 0 ; i < Leserarray.size(); i++){
+					final Leser l = Leserarray.get(i);
+					JLabel label = new JLabel(l.getLeserNr() + ", " + l.getVorname() + " " + l.getNachname());
+					label.setToolTipText("Klicke hier um " + l.getVorname() + " " + l.getNachname() + " auszuwählen");
+					label.addMouseListener(new MouseListener() {
+						
+						@Override
+						public void mouseReleased(MouseEvent e) {
+						}
+						
+						@Override
+						public void mousePressed(MouseEvent e) {
+						}
+						
+						@Override
+						public void mouseExited(MouseEvent e) {
+						}
+						
+						@Override
+						public void mouseEntered(MouseEvent e) {
+						}
+						
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							LeserIDTF.setText(l.getLeserNr() + "");
+							LeserIDSucheFrame.dispose();
+						}
+					});
+					Labelarray.add(label);
+					JPSearch.add(label);
+				}
+				
+				LeserIDSucheFrame.add(JPSearch);
+				LeserIDSucheFrame.setSize(174, 500);
+				LeserIDSucheFrame.setVisible(true);
+			}
+		});
 		JPNAusleihe.add(LeserIDSuche,gBC);
 		
 		final JTextField BuchIDTF = new JTextField();
